@@ -1,0 +1,27 @@
+H1{
+    color:blue;
+    font-family: Arial;
+    font-size: 18px;
+    text-align: center;
+}
+P{
+    color: black;
+    font-family:'Courier New', Courier, monospace;
+    font-size: 10px;
+}
+
+.Caixa{
+    border: 1px solid black;
+}
+
+img{
+    max-width:100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
+
+body{
+    background-color: pink;
+}
