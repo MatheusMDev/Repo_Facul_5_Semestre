@@ -135,12 +135,134 @@ go
 insert into pessoas values ('Fernando Batman', '1010', '15030-620', 'Rua X', '1000')
 insert into pessoas values ('Cadão', '2020', '15093-314', 'Rua Y', '500')
 
-
-
-
-
-
-
 select * from fabricantes
 select * from lanches
 select * from categorias
+
+
+create table telefones
+(
+	pessoa_codigo int not null,
+	nr varchar(15) not null,
+	constraint pk_telefones primary key(pessoa_codigo, nr),
+	constraint fk_pessoas_telefones foreign key(pessoa_codigo) references pessoas
+)
+go
+
+insert into telefones values (1, '3030-3030')
+insert into telefones values (1, '1010-1010')
+insert into telefones values (1, '2020-2020')
+insert into telefones values (2, '55555-5555')
+select * from telefones
+
+create table clientes
+(
+	pessoa_codigo int not null,
+	estrelas decimal(2,1) not null default 1,
+	constraint pk_clientes primary key(pessoa_codigo),
+	constraint fk_pessoas_clientes foreign key(pessoa_codigo) references pessoas
+)
+go
+
+select * from pessoas
+select * from clientes
+insert into clientes(pessoa_codigo) values (2)
+
+create table funcionarios
+(
+	pessoa_codigo int not null,
+	salario decimal(7,2) not null default 1412,
+	constraint pk_funcionarios primary key(pessoa_codigo),
+	constraint fk_pessoas_funcionarios foreign key(pessoa_codigo) references pessoas
+)
+go
+
+insert into funcionarios(pessoa_codigo) values (1)
+
+
+select * from pessoas
+select * from funcionarios
+select * from clientes
+
+create table entregadores
+(
+	pessoa_codigo int not null,
+	valor_diaria decimal(7,2) not null default 80,
+	constraint pk_entregadores primary key(pessoa_codigo),
+	constraint fk_pessoas_entregadores foreign key(pessoa_codigo) references pessoas
+)
+go
+
+insert into entregadores values (1, 90)
+
+
+create table entregas
+(
+	codigo int not null identity,
+	data_hora datetime not null default getdate(),
+	status int not null default 1,
+	entregador_codigo int not null,
+	constraint pk_entregas primary key(codigo),
+	constraint fk_entregador_entregas foreign key (entregador_codigo) references entregadores
+)
+go
+
+insert into entregas (entregador_codigo) values (1)
+
+
+create table pedidos
+(
+	nr int not null identity,
+	data datetime not null default getdate(),
+	total decimal(7,2) null default 0,
+	status int not null default 1,
+	cliente_codigo int not null,
+	funcionarios_codigo int not null,
+	entrega_codigo int,
+	constraint pk_pedidos primary key(nr),
+	constraint fk_clientes_pedidos foreign key(cliente_codigo) references clientes,
+	constraint fk_funcionarios_pedidos foreign key(funcionarios_codigo) references funcionarios,
+	constraint fk_entregas_pedidos foreign key (entrega_codigo) references entregas, 
+)
+go
+
+
+insert into pedidos(cliente_codigo, funcionarios_codigo) values (2,1)
+
+create table pedidos_lanches
+(
+	pedido_nr int not null,
+	lanche_codigo int not null, 
+	qtd int not null,
+	constraint pk_pedidoslanches primary key(pedido_nr, lanche_codigo),
+	constraint fk_pedidos_pedidoslanches foreign key(pedido_nr) references pedidos,
+	constraint fk_lanches_pedidoslanches foreign key(lanche_codigo) references lanches,
+
+)
+go
+
+
+insert into pedidos_lanches values (1, 1, 3)
+insert into pedidos_lanches values (1, 3, 5)
+
+create table pedidos_bebidas
+(
+	pedido_nr int not null,
+	bebida_codigo int not null, 
+	qtd int not null,
+	constraint pk_pedidosbebidas primary key(pedido_nr, bebida_codigo),
+	constraint fk_pedidos_pedidosbebidas foreign key(pedido_nr) references pedidos,
+	constraint fk_bebidas_pedidosbebidas foreign key(bebida_codigo) references bebidas,
+
+)
+go
+
+
+
+select * from pedidos
+
+insert into pedidos_bebidas values (1, 1, 10)
+insert into pedidos_bebidas values (1, 2, 1)
+
+
+update pedidos set total = 250, entrega_codigo = 1 where nr = 1 
